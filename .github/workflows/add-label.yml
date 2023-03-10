@@ -1,0 +1,26 @@
+name: Add Label
+
+on:
+  issues:
+    types:
+      - opened
+      - edited
+
+jobs:
+  add_label_create:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-ecosystem/action-add-labels@v1
+        if: ${{ startsWith(github.event.pull_request.title, 'operator') }}
+        with:
+          labels: run-create-pipeline
+
+  add_label_remove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-ecosystem/action-add-labels@v1
+        if: ${{ startsWith(github.event.pull_request.title, 'remove operator') }}
+        with:
+          labels: run-remove-pipeline

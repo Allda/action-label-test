@@ -1,0 +1,21 @@
+name: Github pull request labels
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  skip-test-labeler:
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Skip test 123
+        uses: actions-ecosystem/action-add-labels@v1
+        if: ${{ startsWith(github.event.comment.body, '/test skip test-123') }}
+        with:
+          labels: tests/skips/test-123
+      - name: Skip test 234
+        uses: actions-ecosystem/action-add-labels@v1
+        if: ${{ startsWith(github.event.comment.body, '/test skip test-234') }}
+        with:
+          labels: tests/skips/test-234

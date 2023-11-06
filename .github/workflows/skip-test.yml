@@ -11,8 +11,24 @@ jobs:
     if: ${{ github.event.issue.pull_request }}
     runs-on: [ubuntu-latest]
     steps:
-      - name: Skip check_pruned_graph
-        uses: actions-ecosystem/action-add-labels@v1
-        if: ${{ startsWith(github.event.comment.body, '/test skip check_pruned_graph') }}
-        with:
-          labels: tests/skips/check_pruned_graph
+    - name: Skip check_pruned_graph
+      uses: actions-ecosystem/action-add-labels@v1
+      if: ${{ startsWith(github.event.comment.body, '/test skip check_pruned_graph') }}
+      with:
+        labels: tests/skips/check_pruned_graph
+  trigger-pipeline:
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: [ubuntu-latest]
+    steps:
+    - name: Get PR labels
+      id: pr-labels
+      uses: joerick/pr-labels-action@v1.0.8
+    - run: echo "${{ steps.pr-labels.outputs.labels }}"
+    - name: Trigger pipeline
+      uses: actions-ecosystem/action-add-labels@v1
+      if: |
+        ${{ startsWith(github.event.comment.body, '/test trigger pipeline')  }} &&
+        ${{ !contains(steps.pr-labels.outputs.labels, 'operator-hosted-pipeline/started') }}  &&
+        ${{ !contains(steps.pr-labels.outputs.labels, 'operator-hosted-pipeline/passed') }}
+      with:
+        labels: tests/trigger/pipeline

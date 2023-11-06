@@ -20,15 +20,10 @@ jobs:
     if: ${{ github.event.issue.pull_request }}
     runs-on: [ubuntu-latest]
     steps:
-    - name: Get PR labels
-      id: pr-labels
-      uses: joerick/pr-labels-action@v1.0.8
-    - run: echo "${{ steps.pr-labels.outputs.labels }}"
+    - name: Print labels
+      run: echo "${{ github.event.issue.labels }}"
     - name: Trigger pipeline
+      if: ${{ startsWith(github.event.comment.body, '/test trigger pipeline')  && contains( github.event.issue.labels.*.name, 'operator-hosted-pipeline/failed') }}
       uses: actions-ecosystem/action-add-labels@v1
-      if: |
-        ${{ startsWith(github.event.comment.body, '/test trigger pipeline')  }} &&
-        ${{ !contains(steps.pr-labels.outputs.labels, 'operator-hosted-pipeline/started') }}  &&
-        ${{ !contains(steps.pr-labels.outputs.labels, 'operator-hosted-pipeline/passed') }}
       with:
         labels: tests/trigger/pipeline
